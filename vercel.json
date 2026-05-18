@@ -1,0 +1,18 @@
+{
+  "functions": {
+    "pages/api/cron/process-queue.js":         { "maxDuration": 60 },
+    "pages/api/match.js":                      { "maxDuration": 60 },
+    "pages/api/scan.js":                       { "maxDuration": 30 },
+    "pages/api/upload/notify.js":              { "maxDuration": 15 },
+    "pages/api/download/zip.js":               { "maxDuration": 30 },
+    "pages/api/download-all.js":               { "maxDuration": 60 },
+    "pages/api/photographer/upload-photos.js": { "maxDuration": 60 },
+    "pages/api/photographer/confirm-upload.js":{ "maxDuration": 30 }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/reset-usage",
+      "schedule": "0 0 1 * *"
+    }
+  ]
+}

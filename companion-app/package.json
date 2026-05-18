@@ -1,0 +1,27 @@
+{
+  "name": "eventsnap-companion",
+  "version": "1.0.0",
+  "description": "EventSnap Camera Companion",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "chokidar": "^3.5.3",
+    "ftp-srv": "^4.6.2",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "in.eventsnap.companion",
+    "productName": "EventSnap Companion",
+    "win": { "target": "nsis", "icon": "assets/icon.ico" },
+    "mac": { "target": "dmg", "icon": "assets/icon.icns" }
+  }
+}
