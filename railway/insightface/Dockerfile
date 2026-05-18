@@ -1,11 +1,10 @@
 # python:3.11-bullseye already has gcc, g++, make built in
-# This avoids needing build-essential from apt (which pulls in cmake and causes mirror failures)
+# This avoids needing build-essential from apt
 FROM python:3.11-bullseye
 
 WORKDIR /app
 
-# Only install small runtime libs needed by OpenCV
-# No build tools needed — they're already in the base image
+# Runtime libs needed by OpenCV / InsightFace
 RUN apt-get update -o Acquire::Retries=5 -o Acquire::http::Timeout=60 && \
     apt-get install -y --no-install-recommends \
       libgl1 \
@@ -13,20 +12,25 @@ RUN apt-get update -o Acquire::Retries=5 -o Acquire::http::Timeout=60 && \
       libgomp1 && \
     rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip then install Python deps
+# Install Python dependencies
 COPY requirements.txt .
+
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir --retries 5 -r requirements.txt
 
-# Download buffalo_sc model at build time (lightweight, fits Railway free tier)
+# Pre-download buffalo_sc model during build
 RUN python -c "\
 import insightface; \
 model = insightface.app.FaceAnalysis(name='buffalo_sc', providers=['CPUExecutionProvider']); \
 model.prepare(ctx_id=0, det_size=(320, 320)); \
 print('buffalo_sc model downloaded and ready.')"
 
+# Copy app source
 COPY . .
 
+# Expose default local port
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+# IMPORTANT:
+# Use Render/Railway dynamic PORT variable in cloud
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]
